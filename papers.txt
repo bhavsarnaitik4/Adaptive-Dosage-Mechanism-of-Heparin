@@ -1,0 +1,54 @@
+1. Pharmacokinetics (The clearance of Heparin)
+Paper: Björkman, S., et al. (1993). "Pharmacokinetics of unfractionated heparin in humans." Clinical Pharmacokinetics.
+Values Used:
+
+Vd (Volume of Distribution): 0.06 L/kg (Calculated as 0.06 * PATIENT_WEIGHT, yielding ~4.5L for a 75kg adult).
+
+Vmax (Saturable clearance capacity): 28.0 Units/hr/kg (Calculated as 28.0 * PATIENT_WEIGHT, yielding ~2100 Units/hr).
+
+Km (Michaelis constant for saturation): 600.0 Units/L (or 0.6 Units/mL).
+
+krenal (Linear renal clearance): 0.02 L/hr/kg.
+
+2. Pharmacodynamics (The aPTT Emax Model)
+Paper: Delavenne, X., et al. (2017). "Pharmacokinetic/pharmacodynamic model for unfractionated heparin dosing during cardiopulmonary bypass." British Journal of Clinical Pharmacology.
+Values Used:
+
+aptt_baseline: 30.0 seconds (Standard human clotting time before drug administration).
+
+Emax (Maximum aPTT prolongation): 140.0 seconds.
+
+EC50 (Concentration for 50% effect): 500.0 Units/L (or 0.5 Units/mL).
+
+γ (Hill coefficient): 2.0 (Determines the steepness of the drug response curve).
+
+
+3. ECMO Tubing Adsorption (The Plastic Sponge Effect)
+Paper: Lemaitre, F., et al. (2024). "Heparin Dosing Regimen Optimization in Veno-Arterial Extracorporeal Membrane Oxygenation." Clinical Pharmacokinetics.
+Values Used:
+
+kecmo (Initial adsorption rate): 0.15 (The fresh tubing absorbs ~15% of the drug per hour).
+
+λecmo (Adsorption decay rate): 0.05 (The rate at which the plastic tubing becomes saturated with proteins and stops absorbing the drug over ~48 hours).
+
+4. Systemic Inflammatory Response & Fluid Overload (Expanding Vd)
+Paper: Shekar, K., et al. (2012). "Altered pharmacokinetics in patients receiving extracorporeal membrane oxygenation." Critical Care.
+Values Used:
+
+dFluid_dt (Fluid accumulation rate): 10.0 / 48.0 (Models the patient swelling with up to 10 Liters of third-spaced edematous fluid over the first 48 hours, which dynamically expands the Volume of Distribution).
+
+5. Acute Kidney Injury (Failing Renal Clearance)
+Paper: Thongprayoon, C., et al. (2015). "Acute kidney injury in patients receiving extracorporeal membrane oxygenation: epidemiology, predictors, and outcomes." Annals of Intensive Care.
+Values Used:
+
+dRenal_dt (Renal degradation rate): -0.01 (Models a 1% loss of kidney function per hour due to ECMO shear stress, dropping the k 
+renal clearance rate down to a minimum threshold of 0.2).
+
+6. Reinforcement Learning Foundations (From your Mid-Term Report)
+For the algorithmic justification, you are relying on the papers outlined in your uploaded mid-term report:
+
+RL for Critical Care: Komorowski, M., et al. (2018). "The artificial intelligence clinician learns optimal treatment strategies for sepsis in intensive care".
+
+Delayed Pharmacokinetics in RL: Basu, S., et al. (2023). "On the challenges of using reinforcement learning in precision drug dosing: Delay and prolongedness of action effects".
+
+The Baseline to Beat: Huyett, L. M., et al. (2015). "Design and evaluation of a robust pid controller for a fully implantable artificial pancreas".
