@@ -396,7 +396,7 @@ def plot_dashboard(nom_m, rl_m, nom_a, nom_d, rl_a, rl_d, n, seed):
              "Hours in Danger Zone (LOWER is Better)")
 
     plt.tight_layout(pad=2.0)
-    fname = f"v6_final_report_fixed_n{n}.png"
+    fname = f"v2_final_report_n{n}.png"
     plt.savefig(fname, dpi=150, facecolor=fig.get_facecolor())
     print(f"Dashboard saved → {fname}")
     plt.show()
@@ -409,14 +409,13 @@ def plot_dashboard(nom_m, rl_m, nom_a, nom_d, rl_a, rl_d, n, seed):
 if __name__ == "__main__":
     
     
-    print("Loading Virtual ICU (Phase IV — Fixed Evaluation)...")
+    print("Loading Virtual ICU (Phase 2)...")
 
     raw_env  = ECMOHeparinEnv(difficulty=3)
     dummy_env = DummyVecEnv([lambda: ECMOHeparinEnv(difficulty=3)])
 
     try:
-        # IMPORTANT: vec_normalize.pkl must have been saved from eval_env in train.py,
-        # NOT from the training env. See train.py fix (eval_env.save(...)).
+       
         eval_env = VecNormalize.load("models/vec_normalize.pkl", dummy_env)
         eval_env.training  = False
         eval_env.norm_reward = False
