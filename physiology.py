@@ -46,19 +46,22 @@ gamma = 2.0                       # Hill coefficient for steepness
 
 # AT-III PD & Degradation (Conceptualized for ECMO shear)
 k_consume = 0.0002                # Micro-consumption per Unit of Heparin
-k_shear = 0.01                    # ECMO pump physical shear destruction rate
 at3_regen = 0.8                   # Hepatic regeneration of AT-III per hour
 
 # Clot Burden Parameters (Latent Event Modeling)
-k_growth = 0.15                   # Clot growth speed
 k_lytic = 0.0001                  # Clot lysis speed
 aptt_min_target = 60.0            # Below 60s, micro-thrombosis begins
+
+# [Keep your imports and other constants the same, but UPDATE THESE THREE]
+k_growth = 0.02                   # REVERTED: Slow enough for an IV drip to catch up
+k_shear = 0.005                   # REVERTED: Normal AT-III consumption
+self_CRITICAL_CLOT_BURDEN = 7.0   # (Note: we will set this in ecmo_env.py to 7.0)
 
 
 # ==========================================
 # 2. DIFFERENTIAL EQUATION SOLVER (Euler)
 # ==========================================
-def step_physiology(state, dose_per_kg, t_ecmo, weight, dt=1.0):
+def step_physiology(state, dose_per_kg, t_ecmo, weight, age_years, dt=1.0):
     """
     state = [C (Conc), AT (AT-III), Omega (Clot), Fluid_Overload (Liters), Renal_Health (0.0 to 1.0)]
     """
@@ -74,8 +77,12 @@ def step_physiology(state, dose_per_kg, t_ecmo, weight, dt=1.0):
     
     saturable_clearance = (patient_Vmax * C) / (Km + C)
     
-    # Renal clearance drops if kidneys fail (Thongprayoon et al., 2015)
-    renal_clearance = (k_renal * renal_health) * C 
+    # Renal clearance drops if kidneys fail (Thongprayoon et al., 2015) AND degrades with age
+    # Baseline GFR drops by ~0.5% per year after age 40
+    age_penalty = max(0.0, (age_years - 40.0) * 0.005)
+    adjusted_renal_health = renal_health * (1.0 - age_penalty)
+    
+    renal_clearance = (k_renal * adjusted_renal_health) * C
     
     ecmo_adsorption = k_ecmo * C * np.exp(-lambda_ecmo * t_ecmo)
     
